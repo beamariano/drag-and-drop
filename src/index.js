@@ -25,10 +25,19 @@ class App extends React.Component {
   //   document.body.style.backgroundColor = `rgba(153, 141, 217, ${opacity})`;
   // };
 
+  onDragStart = (start) => {
+    const homeIndex = this.state.columnOrder.indexOf(start.source.droppableId);
+
+    this.setState({
+      homeIndex,
+    });
+  };
+
   onDragEnd = (result) => {
     document.body.style.color = "inherit";
     document.body.style.backgroundColor = "inherit";
 
+    this.setState({ homeIndex: null });
     const { destination, source, draggableId } = result;
     if (!destination) {
       return;
@@ -96,13 +105,22 @@ class App extends React.Component {
         onDragEnd={this.onDragEnd}
       >
         <Container>
-          {this.state.columnOrder.map((columnId) => {
+          {this.state.columnOrder.map((columnId, index) => {
             const column = this.state.columns[columnId];
             const tasks = column.taskIds.map(
               (taskId) => this.state.tasks[taskId]
             );
 
-            return <Column key={column.id} column={column} tasks={tasks} />;
+            const isDropDisabled = index < this.state.homeIndex; // makes it so you can't return a task from previous, in this case, you can't move in progress to done, or from done to in progress
+
+            return (
+              <Column
+                key={column.id}
+                column={column}
+                tasks={tasks}
+                isDropDisabled={isDropDisabled}
+              />
+            );
           })}
         </Container>
       </DragDropContext>

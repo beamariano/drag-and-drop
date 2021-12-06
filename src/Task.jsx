@@ -7,7 +7,12 @@ const Container = styled.div`
   padding: 8px;
   margin-bottom: 8px;
   border-radius: 2px;
-  background-color: ${(props) => (props.isDragging ? "lightgreen" : "white")};
+  background-color: ${(props) =>
+    props.isDragDisabled
+      ? "lightgrey"
+      : props.isDragging
+      ? "lightgreen"
+      : "white"};
 
   display: flex;
 `;
@@ -25,8 +30,14 @@ const Container = styled.div`
 
 class Task extends Component {
   render() {
+    const isDragDisabled = this.props.task.id === "task-1"; //conditional disabling, can be ordered but not draggable
     return (
-      <Draggable draggableId={this.props.task.id} index={this.props.index}>
+      <Draggable
+        draggableId={this.props.task.id}
+        index={this.props.index}
+        isDragDisabled={isDragDisabled}
+        // isDragDisabled={this.props.task.id === "task-1"} //conditional disabling
+      >
         {(provided, snapshot) => (
           <Container
             {...provided.draggableProps}
